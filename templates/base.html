@@ -7,6 +7,9 @@
     <title>Hello Django</title>
 </head>
 <body>
-{{welcome_msg}}
+    {{ user }} <br />
+    {% for i in params %} {{i}}<br />
+    {% endfor %}
+    <a href="{% url 'register' %}">회원가입</a>
 </body>
 </html>

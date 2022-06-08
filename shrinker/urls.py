@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 
-from client.views import get_user, index
+from client.views import get_user, index, register
 
 
 urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
     path('admin/', admin.site.urls),
     path("", index, name="index"),
-    path("user/<int:user_id>", get_user, name="get_user")
+    path("user/<int:user_id>", get_user, name="get_user"),
+    path("register", register, name="register")
 ]
