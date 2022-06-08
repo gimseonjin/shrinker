@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'client',
-    'debug_toolbar'
+    'debug_toolbar',
+    'django_seed',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,8 @@ INTERNAL_IPS = [
 ]
 
 ROOT_URLCONF = 'shrinker.urls'
+
+LOGIN_URL = "/login"
 
 TEMPLATES = [
     {

@@ -1,6 +1,8 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -67,3 +69,13 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("index")
+
+
+@login_required
+def list_view(request):
+    page = int(request.GET.get("p", 1))
+    users = User.objects.all().order_by("-id")
+    paginator = Paginator(users, 10)
+    users = paginator.get_page(page)
+
+    return render(request, "boards.html", {"users": users})

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 
-from client.views import get_user, index, register, login_view, logout_view
+from client.views import get_user, index, register, login_view, logout_view, list_view
 
 
 urlpatterns = [
@@ -29,4 +29,5 @@ urlpatterns = [
     path("register", register, name="register"),
     path("login", login_view, name="login"),
     path("logout", logout_view, name="logout"),
+    path("list", list_view, name="list_view"),
 ]
