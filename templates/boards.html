@@ -1,54 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>FastCampus Django</title>
-  </head>
-  <body>
+{% extends "base.html" %}
+{%block content%}
     <h2>유저 리스트</h2>
     <h4>{%if msg%}{{msg}}{%endif%}</h4>
-    <table>
+    <table class="table table-hover nowrap text-center font-size-12">
       <thead>
+        <th>ID</th>
         <th>유저이름</th>
         <th>이메일</th>
         <th>가입일</th>
-      </thead>
-      {% for u in users %}
+        <th>페이플랜</th>
+        <th>가격</th>
+    </thead>
+      {% for u in userDetails %}
       <tr>
-        <td>{{u.username}}</td>
-        <td>{{u.email}}</td>
-        <td>{{u.date_joined}}</td>
-      </tr>
+        <td>{{u.user.id}}</td>
+        <td>{{u.user.username}}</td>
+        <td>{{u.user.email}}</td>
+        <td>{{u.user.date_joined}}</td>
+        <td>{{u.pay_plan.name}}</td>
+        <td>{{u.pay_plan.price}}</td>
+    </tr>
       {% endfor %}
-    </table>
-    <nav>
-        <ul>
-            {% if users.has_previous %}                         
-            <li>
-                <a href="?p={{users.previous_page_number }}">이전으로</a>
-            </li>
-            {% else %}
-            <li>
-                <a href="#">이전으로</a>
-            </li>
-            {% endif %}
-            <li>
-                <a href="#">{{users.number}}/{{users.paginator.num_pages}}</a>
-            </li>
-            {% if users.has_next %}
-            <li>
-                <a href="?p={{users.next_page_number }}">다음으로</a>
-            </li>
-            {% else %}
-            <li>
-                <a href="#">다음으로</a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
+  </table
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        {% if userDetails.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?p={{userDetails.previous_page_number }}">이전으로</a>
+      </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="#">이전으로</a>
+      </li class="page-item">
+        {% endif %}
+        <li class="page-item">
+          <a class="page-link" href="?p={{userDetails.number|add:1 }}">{{userDetails.number}}/{{userDetails.paginator.num_pages}}</a>
+      </li>
+        {% if userDetails.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?p={{userDetails.next_page_number }}">다음으로</a>
+      </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="#">다음으로</a>
+      </li>
+        {% endif %}
+    </ul>
+  </nav>
     <p>
       <a href="{% url 'index' %}">홈으로</a>
       <a href="{% url 'register' %}">회원가입</a>
-    </p>
-  </body>
-</html>
+  </p>
+{%endblock%}

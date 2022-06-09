@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from client.forms import RegisterForm
+from client.models import UserDetail
 
 # Create your views here.
 
@@ -74,8 +75,8 @@ def logout_view(request):
 @login_required
 def list_view(request):
     page = int(request.GET.get("p", 1))
-    users = User.objects.all().order_by("-id")
-    paginator = Paginator(users, 10)
-    users = paginator.get_page(page)
+    userDetail = UserDetail.objects.select_related("pay_plan").select_related("user").all().order_by("-id")
+    paginator = Paginator(userDetail, 5)
+    userDetails = paginator.get_page(page)
 
-    return render(request, "boards.html", {"users": users})
+    return render(request, "boards.html", {"userDetails": userDetails})
