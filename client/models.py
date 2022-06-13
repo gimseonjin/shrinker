@@ -131,6 +131,7 @@ class ShortenedUrls(TimeStampedModel):
         WEBSITE = "web"
         TELEGRAM = "telegram"
 
+    @staticmethod
     def rand_string():
         """
         This is Static method for creating short url!!!
@@ -142,6 +143,7 @@ class ShortenedUrls(TimeStampedModel):
         str_pool = string.digits + string.ascii_letters
         return ("".join([random.choice(str_pool) for _ in range(6)])).lower()
     
+    @staticmethod
     def rand_letter():
         """
         This is Static method for creating prefix!!!

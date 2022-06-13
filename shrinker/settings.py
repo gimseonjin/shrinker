@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-gypf(pd0c*+^@7jy^_j&#q_bu0o2ff_89i@i6)3paf-xpewj)=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition

@@ -1,9 +1,10 @@
-from client.utils import url_count_changer
-from django.contrib import messages
-from client.forms import UrlCreateForm
-from django.shortcuts import redirect, render
-from client.models import ShortenedUrls
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import redirect, render
+
+from client.utils import url_count_changer
+from client.forms import UrlCreateForm
+from client.models import ShortenedUrls
 
 
 def url_list(request):
@@ -40,8 +41,8 @@ def url_change(request, action, url_id):
                     msg = f"{url_data.first().nick_name} 삭제 완료!"
                     try:
                         url_data.delete()
-                    except Exception as e:
-                        print(e)
+                    except Exception as exc:
+                        print(exc)
                     else:
                         url_count_changer(request, False)
                     messages.add_message(request, messages.INFO, msg)
