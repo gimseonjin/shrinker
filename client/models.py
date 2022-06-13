@@ -69,10 +69,12 @@ class Users(models.Model):
     This is Users table extends admin user in django
 
     full_name : string, null true
+    url_count : integer, default 0
     organization : Object(organization), null true
     '''
     user = models.OneToOneField(U, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100, null=True)
+    url_count = models.IntegerField(default=0)
     organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
 
 
@@ -138,11 +140,22 @@ class ShortenedUrls(TimeStampedModel):
         return 6 length string!
         """
         str_pool = string.digits + string.ascii_letters
-        return ("".join([random.choices(str_pool) for _ in range(6)])).lower()
+        return ("".join([random.choice(str_pool) for _ in range(6)])).lower()
+    
+    def rand_letter():
+        """
+        This is Static method for creating prefix!!!
+
+        parameter not required!
+
+        return random string!
+        """
+        str_pool = string.ascii_letters
+        return random.choice(str_pool).lower()
 
     nick_name = models.CharField(max_length=100)
     category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, null=True)
-    prefix = models.CharField(max_length=50)
+    prefix = models.CharField(max_length=50, default=rand_letter)
     creator = models.ForeignKey(Users, on_delete=models.CASCADE)
     target_url = models.CharField(max_length=2000)
     shortened_url = models.CharField(max_length=6, default=rand_string)
