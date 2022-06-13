@@ -1,26 +1,152 @@
-from tkinter import CASCADE
+"""
+Describe models in client
+"""
+import string
+import random\
+
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as U
 
 # Create your models here.
 
 
-class PayPlan(models.Model):
+class TimeStampedModel(models.Model):
+    """
+    This is Time Stame Model!
+
+    abstracted the generation and modification times of other models.
+    """
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+class PayPlan(TimeStampedModel):
     '''
-    유저의 계약 정보를 담는 모델입니다.
+    This is Users Pay Plan Model
+
+    name : string
+    price : intiger
     '''
     name = models.CharField(max_length=20)
     price = models.IntegerField()
+
+class Organization(TimeStampedModel):
+    '''
+    This is relationship table User and PayPaln
+
+    name : string
+    / should insert user before
+
+    industry : string
+    / this is enum(persional, retail, manufacturing, it, others)
+
+    pay_playn : Object(PayPlan)
+    '''
+    class Industries(models.TextChoices):
+        '''
+        This is enum class of Organization
+
+        - persional, retail, manufacturing, it, others
+        '''
+        PERSONAL = "personal"
+        RETAIL = "retail"
+        MANUFACTURING = "manufacturing"
+        IT = "it"
+        OTHERS = "others"
+    name = models.CharField(max_length=20)
+    industry = models.CharField(max_length=15,
+                                choices=Industries.choices,
+                                default=Industries.OTHERS)
+    pay_plan = models.ForeignKey(PayPlan, on_delete=models.DO_NOTHING, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class UserDetail(models.Model):
+class Users(models.Model):
     '''
-    유저와 계약 정보를 1 대 1 매핑하는 관계 테이블 모델입니다.
-    관계 테이블로 만든 이유는 가능한 사이드 이펙트를 만들고 싶지 않아
-    django 기본 테이블을 변형시키고 싶지 않습니다.
-    '''
-    user = models.OneToOneField(User, on_delete= models.CASCADE)
-    pay_plan = models.ForeignKey(PayPlan, on_delete= models.DO_NOTHING)
+    This is Users table extends admin user in django
 
+    full_name : string, null true
+    organization : Object(organization), null true
+    '''
+    user = models.OneToOneField(U, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100, null=True)
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
+
+
+class EmailVerification(TimeStampedModel):
+    """
+    This is Email Verification Model!
+
+    user : Object(User)
+    key : string / null true
+    verified : boolean / default False
+    """
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100, null=True)
+    verified = models.BooleanField(default=False)
+
+
+class Categories(TimeStampedModel):
+    """
+    This is Categories Model!
+
+    This is Using for Pro level
+
+    name : string / different from users name
+    organization : Object(Organization)
+    creator : Object(Users)
+    """
+    name = models.CharField(max_length=100)
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
+    creator = models.ForeignKey(Users, on_delete=models.CASCADE)
+
+
+class ShortenedUrls(TimeStampedModel):
+    """
+    This is Shortened Url models
+
+    Make shortened urls and save
+
+    nick_name : string
+    category : Object(Categories)
+    prefix : string
+    creator : Object(Users)
+    target_url : string
+    shortened_url : string
+    create_via : string
+    / this is enum(Web, telegram)
+    expired_at : datetime
+    """
+    class UrlCreatedVia(models.TextChoices):
+        """
+        This is enum class of ShortenedUrls
+
+        - web, telegram
+        """
+        WEBSITE = "web"
+        TELEGRAM = "telegram"
+
+    def rand_string():
+        """
+        This is Static method for creating short url!!!
+
+        parameter not required!
+
+        return 6 length string!
+        """
+        str_pool = string.digits + string.ascii_letters
+        return ("".join([random.choices(str_pool) for _ in range(6)])).lower()
+
+    nick_name = models.CharField(max_length=100)
+    category = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, null=True)
+    prefix = models.CharField(max_length=50)
+    creator = models.ForeignKey(Users, on_delete=models.CASCADE)
+    target_url = models.CharField(max_length=2000)
+    shortened_url = models.CharField(max_length=6, default=rand_string)
+    create_via = models.CharField(max_length=8,
+                                choices=UrlCreatedVia.choices,
+                                default=UrlCreatedVia.WEBSITE)
+    expired_at = models.DateTimeField(null=True)
