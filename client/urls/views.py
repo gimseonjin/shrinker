@@ -1,14 +1,18 @@
+from functools import wraps
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
+from ratelimit.decorators import ratelimit
 
 from client.utils import url_count_changer
 from client.forms import UrlCreateForm
-from client.models import ShortenedUrls
+from client.models import ShortenedUrls, Staticstic
 
-
+@ratelimit(key='ip', rate='3/m')
 def url_redirect(request, prefix, url):
-    print(prefix, url)
+    was_limited = getattr(request, "limited", False)
+    if was_limited:
+        return redirect("index")
     get_url = get_object_or_404(ShortenedUrls, prefix=prefix, shortened_url=url)
     is_permanent = False
     target = get_url.target_url
@@ -17,6 +21,9 @@ def url_redirect(request, prefix, url):
 
     if not target.startswith("https://") and not target.startswith("http://"):
         target = "https://" + get_url.target_url
+    
+    staticstic = Staticstic()
+    staticstic.record(request, get_url)
     return redirect(target, permanent=is_permanent)
 
 
