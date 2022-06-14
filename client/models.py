@@ -2,7 +2,7 @@
 Describe models in client
 """
 import string
-import random\
+import random
 
 from django.db import models
 from django.contrib.auth.models import User as U
@@ -131,7 +131,6 @@ class ShortenedUrls(TimeStampedModel):
         WEBSITE = "web"
         TELEGRAM = "telegram"
 
-    @staticmethod
     def rand_string():
         """
         This is Static method for creating short url!!!
@@ -143,7 +142,6 @@ class ShortenedUrls(TimeStampedModel):
         str_pool = string.digits + string.ascii_letters
         return ("".join([random.choice(str_pool) for _ in range(6)])).lower()
     
-    @staticmethod
     def rand_letter():
         """
         This is Static method for creating prefix!!!
@@ -165,3 +163,13 @@ class ShortenedUrls(TimeStampedModel):
                                 choices=UrlCreatedVia.choices,
                                 default=UrlCreatedVia.WEBSITE)
     expired_at = models.DateTimeField(null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=[
+                    "prefix",
+                    "shortened_url"
+                ]
+            )
+        ]

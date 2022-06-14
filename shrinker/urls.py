@@ -17,22 +17,11 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 
-from client.views import (
-    index,
-    get_user,
-    list_view,
-    register,
-    login_view,
-    logout_view,
-)
+from client.urls.views import url_redirect
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", index, name="index"),
-    path("register", register, name="register"),
-    path("login", login_view, name="login"),
-    path("logout", logout_view, name="logout"),
-    path("list", list_view, name="list_view"),
-    path("get_user/<int:user_id>", get_user),
+    path("", include("client.index.urls")),
     path("urls/", include("client.urls.urls")),
+    path("<str:prefix>/<str:url>", url_redirect),
 ]
